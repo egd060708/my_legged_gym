@@ -102,10 +102,10 @@ class Bike2DofHeadCfg(LeggedRobotCfg):
         angVel_dead_zone = 0.1
         use_linVel_dead_zone = False
         linVel_dead_zone = 0.2
-        lin_vel_add_p = 0.25
+        lin_vel_add_p = 0.2
 
         class ranges:
-            lin_vel_x = [1., 3.]  # min max [m/s]
+            lin_vel_x = [0., 3.]  # min max [m/s]
             ang_vel_yaw = [-0.8, 0.8]  # min max [rad/s]
             heading = [-3.1415, 3.1415]
             # heading = [-1.57,1.57]
@@ -132,10 +132,10 @@ class Bike2DofHeadCfg(LeggedRobotCfg):
         turn_actions_clip = 40
         
     class domain_rand(LeggedRobotCfg.domain_rand):
-        randomize_init_yaw = False
-        randomize_init_roll = False
+        randomize_init_yaw = True
+        randomize_init_roll = True
         init_yaw_range = [-3.1415,3.1415]
-        init_roll_range = [-0.3,0.3]
+        init_roll_range = [-0.2,0.2]
         randomize_friction = True
         #friction_range = [0.2, 2.75]
         friction_range = [0., 1.5]
@@ -183,6 +183,7 @@ class Bike2DofHeadCfg(LeggedRobotCfg):
         only_positive_rewards = True
         # headingVel params
         lin_tracking_sigma = 0.25
+        lin_tracking_sigma_tight = 0.125
         ang_tracking_sigma = 0.1
         ang_tracking_sigma_tight = 0.05
         heading_sigma = 0.05
@@ -202,8 +203,8 @@ class Bike2DofHeadCfg(LeggedRobotCfg):
             # foot_slide = -0.1
             
             # headingVel params
-            orientation = -200.
-            termination = -10000.0
+            orientation = -100.
+            termination = -1000.0
             # addition_wheel_acc = -5.e-6
             # tracking_ang_vel = 1.5
             # tracking_ang_vel_tight = 1.
@@ -213,7 +214,8 @@ class Bike2DofHeadCfg(LeggedRobotCfg):
             # wheel_slip = -0.5
             # ang_vel_xy = -0.1
             # tracking_lin_vel=0.
-            tracking_lin_vel_x = 1.
+            tracking_lin_vel_x = 2.
+            tracking_lin_vel_x_tight = 5.
             # tracking_lin_vel_y = 0.
             # heading = 1.5
             # heading_wide = 1.5
@@ -251,7 +253,9 @@ class Bike2DofHeadCfgPPO(LeggedRobotCfgPPO):
 
     class runner( LeggedRobotCfgPPO.runner ):
         run_name = ''
-        experiment_name = 'flat_bike'
-        load_run = -1
+        experiment_name = 'bike'
+        resume = True
+        load_run =  "/home/ubuntu/zzr/my_legged_gym/legged_gym-master/logs/bike/Jun05_10-46-08_"
+        checkpoint = 5000 # -1 = last saved model
         max_iterations = 5000
     pass

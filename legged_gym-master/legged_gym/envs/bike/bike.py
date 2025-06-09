@@ -523,7 +523,8 @@ class Bike2DofHead(BaseTask):
         Args:
             env_ids (List[int]): Environments ids for which new commands are needed
         """
-        self.commands[env_ids, 0] = torch_rand_float(self.command_ranges["lin_vel_x"][0], self.command_ranges["lin_vel_x"][1], (len(env_ids), 1), device=self.device).squeeze(1)
+        add_idx = torch_rand_float(0., 1., (len(env_ids), 1), device=self.device).squeeze(1) > self.cfg.commands.lin_vel_add_p
+        self.commands[env_ids, 0] = add_idx * torch_rand_float(self.command_ranges["lin_vel_x"][0], self.command_ranges["lin_vel_x"][1], (len(env_ids), 1), device=self.device).squeeze(1)
         # self.commands[env_ids, 3] = torch_rand_float(self.command_ranges["heading"][0], self.command_ranges["heading"][1], (len(env_ids), 1), device=self.device).squeeze(1)
         self.commands[env_ids, 2] = torch_rand_float(self.command_ranges["ang_vel_yaw"][0], self.command_ranges["ang_vel_yaw"][1], (len(env_ids), 1), device=self.device).squeeze(1)
 
@@ -641,7 +642,7 @@ class Bike2DofHead(BaseTask):
             self.root_states[env_ids, :3] += self.env_origins[env_ids]
         # base velocities
         self.root_states[env_ids, 8:13] = 0.
-        self.root_states[env_ids, 7:8] = 1.
+        self.root_states[env_ids, 7:8] = 0.
         # self.root_states[env_ids, 7:13] = torch_rand_float(-0.5, 0.5, (len(env_ids), 6), device=self.device) # [7:10]: lin vel, [10:13]: ang vel
         
         # base ori
@@ -1019,4 +1020,9 @@ class Bike2DofHead(BaseTask):
     def _reward_tracking_lin_vel_x(self):
         lin_vel_error = torch.square(self.commands[:, 0] - self.base_lin_vel[:, 0])
         rew1 = torch.exp(-lin_vel_error/self.cfg.rewards.lin_tracking_sigma) 
+        return rew1
+    
+    def _reward_tracking_lin_vel_x_tight(self):
+        lin_vel_error = torch.square(self.commands[:, 0] - self.base_lin_vel[:, 0])
+        rew1 = torch.exp(-lin_vel_error/self.cfg.rewards.lin_tracking_sigma_tight) 
         return rew1
