@@ -251,7 +251,7 @@ class Bike2DofHeadCfgPPO(LeggedRobotCfgPPO):
 
     class runner( LeggedRobotCfgPPO.runner ):
         run_name = ''
-        experiment_name = 'flat_bike'
+        experiment_name = 'bike'
         load_run = -1
         max_iterations = 5000
     pass
